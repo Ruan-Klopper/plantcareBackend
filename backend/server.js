@@ -13,7 +13,7 @@ app.use(express.json());
 // CORS setup for allowing requests from the frontend
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // Your frontend URL, e.g., https://your-frontend-url.com
+    origin: "*",
     credentials: true,
   })
 );
