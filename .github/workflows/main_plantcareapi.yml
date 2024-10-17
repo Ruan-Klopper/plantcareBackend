@@ -30,12 +30,17 @@ jobs:
         working-directory: ./backend  # Adjust this if your backend folder has a different path
         run: npm run build --if-present
 
-      # Upload the backend build (artifact)
+      # Package the backend into a zip file for deployment
+      - name: Archive backend content
+        run: zip -r backend.zip ./backend  # Package the backend folder into a zip file
+        shell: bash
+
+      # Upload the packaged backend (artifact)
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./backend  # Path to your backend folder
+          path: backend.zip  # Upload the zipped backend for deployment
 
   deploy:
     runs-on: ubuntu-latest
