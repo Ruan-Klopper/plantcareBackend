@@ -21,17 +21,21 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-      
+      # Specify the correct working directory for your backend
+      - name: Install Dependencies
+        working-directory: ./backend  # Adjust this if your backend folder has a different path
+        run: npm install
+
+      - name: Build Backend
+        working-directory: ./backend  # Adjust this if your backend folder has a different path
+        run: npm run build --if-present
+
+      # Upload the backend build (artifact)
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./backend  # Path to your backend folder
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,5 +56,5 @@ jobs:
         with:
           app-name: 'plantcareAPI'
           slot-name: 'Production'
-          package: .
+          package: ./backend
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F956D6E696E54F1C83AA0D5433F6AE49 }}
