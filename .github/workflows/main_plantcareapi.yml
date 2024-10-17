@@ -14,20 +14,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code
       - uses: actions/checkout@v4
 
+      # Set up Node.js environment
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      # Specify the correct working directory for your backend
+      # Install backend dependencies
       - name: Install Dependencies
-        working-directory: ./backend  # Adjust this if your backend folder has a different path
+        working-directory: ./backend  # Ensure this is the correct path to your backend directory
         run: npm install
 
+      # Build the backend if necessary
       - name: Build Backend
-        working-directory: ./backend  # Adjust this if your backend folder has a different path
+        working-directory: ./backend  # Ensure this is the correct path to your backend directory
         run: npm run build --if-present
 
       # Archive the backend into a zip file
@@ -39,7 +42,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: backend-zip  # Name the artifact
+          name: backend-zip  # Change name to backend-zip to match with the download step
           path: backend.zip  # Path to the zip file
 
   deploy:
@@ -50,16 +53,18 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
+      # Download the zipped backend from the previous build job
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-      
+          name: backend-zip  # This should match the name from the previous job
+
+      # Deploy the zip file to Azure Web App
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'plantcareAPI'
+          app-name: 'plantcareAPI'  # Adjust this to your Azure Web App name
           slot-name: 'Production'
-          package: ./backend
+          package: backend.zip  # Path to the zip file
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F956D6E696E54F1C83AA0D5433F6AE49 }}
