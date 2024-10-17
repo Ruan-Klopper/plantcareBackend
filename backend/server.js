@@ -27,6 +27,11 @@ mongoose
   .then(() => console.log("MongoDB is connected"))
   .catch((err) => console.log(err));
 
+// Root route to indicate that the API is up and running
+app.get("/", (req, res) => {
+  res.send("API is up and running");
+});
+
 // API routes
 const userRoutes = require("./Routes/UserRoutes");
 app.use("/api/users", userRoutes);
